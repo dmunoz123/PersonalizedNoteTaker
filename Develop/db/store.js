@@ -1,53 +1,65 @@
 const fs = require("fs");
 const { promisify } = require("util");
 
+//generating unique id package
+const { v4: uuidv4 } = require("uuid");
+
 //going to use to read and write database for notes taken/new notes
 const readFileAsync = promisify(fs.readFile);
 const writeFileAsync = promisify(fs.writeFile);
 
-//new id generator package
-const uid = new ShortUniqueId({ length: 5 });
-
-
 class StoredItems {
-  //reads all notes  in db.json asynchronously 
+  //reads all notes  in db.json asynchronously
   readNote() {
-    return readFileAsync('db/db.json', 'utf8');
-  };
+    return readFileAsync("db/db.json", "utf8");
+  }
+
+  writeNote(fullNotes) {
+    return writeFileAsync("db/db.json", JSON.stringify(fullNotes));
+  }
 
   getNotes() {
-    return this.readNote()
-      .then((notes => {
-        let parsedNotes;
+    return this.readNote().then((notes) => {
+      let parsedNotes;
 
-        if (parsedNotes.isArray(false)) {
-          
-        }
+      try {
+        parsedNotes = [].concat(JSON.parse(notes));
+      } catch (err) {
+        parsedNotes = [];
+      }
 
+      // if (parsedNotes.isArray(false)) {
+      //   parsedNotes = [];
+      // } else {
+      //   parsedNotes = [].concat(JSON.parse(notes));
+      // }
 
-      }))
+      return parsedNotes;
+    });
   }
 
   addNote(note) {
-    const{ title, text } = note;
+    const { title, text } = note;
 
-    const newNote = { title, text, id: uid() };
+    const newNote = { title, text, id: uuidv4() };
 
     //making sure both title and text are not null
-    if(title === null) {
+    if (title === null) {
       throw new Error("There must be an input for 'title'.");
     }
-    if(text === null) {
-      throw new Error("There must be an input for 'text'.")
+    if (text === null) {
+      throw new Error("There must be an input for 'text'.");
     }
 
-    return this.getNotes()
-      .then((notes) => [...notes, newNote])
-      
-      //writes updated list of notes to db json
-      .then((fullNotes)) => writeFileAsync('db/db.json', JSON.stringify(fullNotes))
-      //returns new note
-      .then(() => newNote);
+    return (
+      this.getNotes()
+        .then((notes) => [...notes, newNote])
+
+        //writes updated list of notes to db json
+        .then((updatedNotes) => this.writeNote(updatedNotes))
+        //returns new note
+        .then(() => newNote)
+    );
   }
 }
 
