@@ -24,6 +24,6 @@ Read documentation regarding each package used in this project:
 
 ## Example
 
-- ![Image](https://drive.google.com/file/d/1wPbtTeZo361VlcNnuq-2LTvyGzDpkff2/view?usp=sharing)
+- ![Image](file:///C:/Users/danie/OneDrive/Pictures/Screenshots/homework_8_ss.png)
 - [Heroku Deployment](https://personalizednotetaker-319e3eb3645f.herokuapp.com/)
 - [Github](https://github.com/dmunoz123/PersonalizedNoteTaker)
